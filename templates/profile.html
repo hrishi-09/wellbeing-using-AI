@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+{% block title %}Profile — Auro{% endblock %}
+{% block content %}
+
+<h1 class="auro-title" style="text-align:left;">Your Profile</h1>
+<p class="auro-subtitle" style="text-align:left;">everything Auro remembers about you, in one place</p>
+
+{% if guidance %}
+<div class="card" style="margin-bottom:1.6rem; border-left:3px solid var(--blue);">
+  <div class="section-title" style="margin-top:0;"><h2>Guidance for your age group — {{ guidance.label }}</h2></div>
+  <p><strong>Sleep target:</strong> {{ guidance.sleep_hours }}</p>
+  <p><strong>Activity target:</strong> {{ guidance.exercise }}</p>
+  <ul style="margin:0.4rem 0 0; padding-left:1.2rem; line-height:1.7;">
+    {% for note in guidance.notes %}
+    <li>{{ note }}</li>
+    {% endfor %}
+  </ul>
+  <p style="color:var(--text-dim); font-size:0.88rem; margin-top:0.6rem;">
+    General reference ranges, not a diagnosis or medical prescription. Turn this off anytime in Preferences below.
+  </p>
+</div>
+{% elif user.age is none %}
+<div class="card" style="margin-bottom:1.6rem;">
+  <p>Add your age in Personal Information below to get sleep/activity guidance tailored to your age group.</p>
+</div>
+{% endif %}
+
+<form method="POST" action="{{ url_for('user_service.profile_save') }}">
+
+  <div class="section-title"><h2>Personal Information</h2></div>
+  <div class="card" style="margin-bottom:1.6rem;">
+    <div class="field-row">
+      <div class="field">
+        <label>Full name</label>
+        <input type="text" name="name" value="{{ user['name'] }}" required>
+      </div>
+      <div class="field">
+        <label>Age</label>
+        <input type="number" name="age" min="10" max="110" value="{{ user['age'] or '' }}">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Sex</label>
+        <select name="sex">
+          <option value="" {{ 'selected' if not user['sex'] }}>Prefer not to say</option>
+          <option value="Female" {{ 'selected' if user['sex']=='Female' }}>Female</option>
+          <option value="Male" {{ 'selected' if user['sex']=='Male' }}>Male</option>
+          <option value="Other" {{ 'selected' if user['sex']=='Other' }}>Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" name="email" value="{{ user['email'] or '' }}">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Location</label>
+        <input type="text" name="location" value="{{ user['location'] or '' }}">
+      </div>
+      <div class="field">
+        <label>Date of birth</label>
+        <input type="date" name="date_of_birth" value="{{ prof['date_of_birth'] if prof else '' }}">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Occupation</label>
+        <input type="text" name="occupation" value="{{ prof['occupation'] if prof else '' }}">
+      </div>
+      <div class="field">
+        <label>Marital status</label>
+        <input type="text" name="marital_status" value="{{ prof['marital_status'] if prof else '' }}">
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title"><h2>Medical Information</h2></div>
+  <div class="card" style="margin-bottom:1.6rem;">
+    <p style="color:var(--text-dim); font-size:0.88rem; margin-top:0;">
+      Stored only for your own reference and for the Therapist Report — not reviewed or used by anyone else.
+    </p>
+    <div class="field-row">
+      <div class="field">
+        <label>Blood group</label>
+        <input type="text" name="blood_group" placeholder="e.g. O+" value="{{ prof['blood_group'] if prof else '' }}">
+      </div>
+      <div class="field">
+        <label>Therapist / doctor's name</label>
+        <input type="text" name="therapist_name" value="{{ prof['therapist_name'] if prof else '' }}">
+      </div>
+    </div>
+    <div class="field">
+      <label>Medical conditions</label>
+      <textarea name="medical_conditions" rows="2" placeholder="e.g. asthma, diabetes">{{ prof['medical_conditions'] if prof else '' }}</textarea>
+    </div>
+    <div class="field">
+      <label>Current medications</label>
+      <textarea name="medications" rows="2">{{ prof['medications'] if prof else '' }}</textarea>
+    </div>
+    <div class="field">
+      <label>Allergies</label>
+      <textarea name="allergies" rows="2">{{ prof['allergies'] if prof else '' }}</textarea>
+    </div>
+  </div>
+
+  <div class="section-title"><h2>Lifestyle</h2></div>
+  <div class="card" style="margin-bottom:1.6rem;">
+    <div class="field-row">
+      <div class="field">
+        <label>Smoking</label>
+        <select name="smoking">
+          <option value="" {{ 'selected' if not (prof and prof['smoking']) }}>Prefer not to say</option>
+          <option value="No" {{ 'selected' if prof and prof['smoking']=='No' }}>No</option>
+          <option value="Occasionally" {{ 'selected' if prof and prof['smoking']=='Occasionally' }}>Occasionally</option>
+          <option value="Regularly" {{ 'selected' if prof and prof['smoking']=='Regularly' }}>Regularly</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Alcohol</label>
+        <select name="alcohol">
+          <option value="" {{ 'selected' if not (prof and prof['alcohol']) }}>Prefer not to say</option>
+          <option value="No" {{ 'selected' if prof and prof['alcohol']=='No' }}>No</option>
+          <option value="Occasionally" {{ 'selected' if prof and prof['alcohol']=='Occasionally' }}>Occasionally</option>
+          <option value="Regularly" {{ 'selected' if prof and prof['alcohol']=='Regularly' }}>Regularly</option>
+        </select>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Diet type</label>
+        <input type="text" name="diet_type" placeholder="e.g. vegetarian, vegan, no restriction" value="{{ prof['diet_type'] if prof else '' }}">
+      </div>
+      <div class="field">
+        <label>Typical activity level</label>
+        <select name="activity_level">
+          <option value="" {{ 'selected' if not (prof and prof['activity_level']) }}>Select one</option>
+          <option value="Sedentary" {{ 'selected' if prof and prof['activity_level']=='Sedentary' }}>Sedentary (little exercise)</option>
+          <option value="Light" {{ 'selected' if prof and prof['activity_level']=='Light' }}>Light (1–2 days/week)</option>
+          <option value="Moderate" {{ 'selected' if prof and prof['activity_level']=='Moderate' }}>Moderate (3–4 days/week)</option>
+          <option value="Active" {{ 'selected' if prof and prof['activity_level']=='Active' }}>Active (5+ days/week)</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Work schedule</label>
+      <input type="text" name="work_schedule" placeholder="e.g. day shift, night shift, rotating, student" value="{{ prof['work_schedule'] if prof else '' }}">
+    </div>
+  </div>
+
+  <div class="section-title"><h2>Emergency Contact</h2></div>
+  <div class="card" style="margin-bottom:1.6rem;">
+    <div class="field-row">
+      <div class="field">
+        <label>Name</label>
+        <input type="text" name="emergency_contact_name" value="{{ prof['emergency_contact_name'] if prof else '' }}">
+      </div>
+      <div class="field">
+        <label>Relationship</label>
+        <input type="text" name="emergency_contact_relation" value="{{ prof['emergency_contact_relation'] if prof else '' }}">
+      </div>
+    </div>
+    <div class="field">
+      <label>Phone</label>
+      <input type="tel" name="emergency_contact_phone" value="{{ prof['emergency_contact_phone'] if prof else '' }}">
+    </div>
+  </div>
+
+  <div class="section-title"><h2>Goals</h2></div>
+  <div class="card" style="margin-bottom:1.6rem;">
+    <div class="field">
+      <label>One goal per line</label>
+      <textarea name="goals" rows="4" placeholder="e.g.&#10;Sleep 7+ hours most nights&#10;Walk 20 minutes a day&#10;Log mood every day for a month">{{ goals|join('\n') }}</textarea>
+    </div>
+  </div>
+
+  <div class="section-title"><h2>Preferences</h2></div>
+  <div class="card" style="margin-bottom:1.6rem;">
+    <div class="field-row">
+      <div class="field">
+        <label>Units</label>
+        <select name="units">
+          <option value="metric" {{ 'selected' if preferences.units=='metric' }}>Metric (kg, cm)</option>
+          <option value="imperial" {{ 'selected' if preferences.units=='imperial' }}>Imperial (lb, ft/in)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Theme</label>
+        <select name="theme">
+          <option value="dark" {{ 'selected' if preferences.theme=='dark' }}>Dark</option>
+          <option value="light" {{ 'selected' if preferences.theme=='light' }}>Light</option>
+        </select>
+      </div>
+    </div>
+    <div class="field" style="display:flex; align-items:center; gap:0.5rem;">
+      <input type="checkbox" id="notif" name="notifications_enabled" style="width:auto;" {{ 'checked' if preferences.notifications_enabled }}>
+      <label for="notif" style="margin:0;">Enable reminders/notifications</label>
+    </div>
+    <div class="field" style="display:flex; align-items:center; gap:0.5rem;">
+      <input type="checkbox" id="ageg" name="age_guidance_enabled" style="width:auto;" {{ 'checked' if preferences.age_guidance_enabled }}>
+      <label for="ageg" style="margin:0;">Show age-based guidance and tailor suggestions to my age group</label>
+    </div>
+  </div>
+
+  <button class="btn full" type="submit">Save Profile</button>
+</form>
+
+{% endblock %}
