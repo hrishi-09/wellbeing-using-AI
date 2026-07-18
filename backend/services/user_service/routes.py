@@ -9,11 +9,11 @@ import json
 from flask import Blueprint, render_template, request, redirect, url_for, session, send_file, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from config import OUT_DIR
-from gateway.auth import login_required
-from services.notification_service.notifier import notify
-from services.content_service import pdf_gen
-from services.ai_engine import age_guidance
+from backend.config import OUT_DIR
+from backend.gateway.auth import login_required
+from backend.services.notification_service.notifier import notify
+from backend.services.content_service import pdf_gen
+from backend.services.ai_engine import age_guidance
 from . import repository
 
 user_service = Blueprint("user_service", __name__)

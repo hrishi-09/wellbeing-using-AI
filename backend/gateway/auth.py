@@ -10,8 +10,8 @@ gate they pass through is still a single, explicit place.
 from functools import wraps
 from flask import session, redirect, url_for
 
-from services.user_service import repository as user_repository
-from services.notification_service.notifier import notify
+from backend.services.user_service import repository as user_repository
+from backend.services.notification_service.notifier import notify
 
 
 def login_required(view):

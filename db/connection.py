@@ -1,13 +1,13 @@
 """
-Data & storage layer.
+Database layer.
 
 This is the single source of truth for the schema and connection
-handling that every core service reads and writes through. In the
+handling that every backend service reads and writes through. In the
 architecture diagram this is the "PostgreSQL (main DB)" box — today
 it's SQLite for simplicity, but every service already only talks to
 its own tables through its own repository module (see
-services/*/repository.py), so swapping the engine later means editing
-this file, not the services themselves.
+backend/services/*/repository.py), so swapping the engine later means
+editing this file, not the services themselves.
 """
 import sqlite3
 import os

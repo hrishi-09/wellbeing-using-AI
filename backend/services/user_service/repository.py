@@ -7,7 +7,7 @@ rather than querying these tables directly.
 """
 from datetime import datetime
 
-from data.db import get_db
+from db.connection import get_db
 
 
 def create_user(name, phone, age, sex, email, location, password_hash):

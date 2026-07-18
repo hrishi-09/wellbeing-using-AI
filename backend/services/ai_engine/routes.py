@@ -10,9 +10,9 @@ today.
 import json
 from flask import Blueprint, render_template, session
 
-from gateway.auth import login_required
-from services.user_service import repository as user_repository
-from services.health_data_service import repository as health_repository
+from backend.gateway.auth import login_required
+from backend.services.user_service import repository as user_repository
+from backend.services.health_data_service import repository as health_repository
 from . import insights
 from . import age_guidance
 

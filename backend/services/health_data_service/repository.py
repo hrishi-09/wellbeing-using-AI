@@ -8,7 +8,7 @@ would call this service's API instead of reaching into its database.
 """
 from datetime import datetime
 
-from data.db import get_db
+from db.connection import get_db
 
 
 def upsert_mood_log(user_id, log_date, mood_score, anxiety_score, sleep_hours, exercise_minutes, notes):

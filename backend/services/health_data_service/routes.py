@@ -9,13 +9,13 @@ would call out to those services over the network.
 from datetime import date, timedelta
 from flask import Blueprint, render_template, request, redirect, url_for, session, jsonify, send_file, current_app
 
-from config import OUT_DIR
-from gateway.auth import login_required
-from services.notification_service.notifier import notify
-from services.user_service import repository as user_repository
-from services.content_service import pdf_gen
-from services.content_service.cbt_library import CBT_LIBRARY
-from services.ai_engine import insights
+from backend.config import OUT_DIR
+from backend.gateway.auth import login_required
+from backend.services.notification_service.notifier import notify
+from backend.services.user_service import repository as user_repository
+from backend.services.content_service import pdf_gen
+from backend.services.content_service.cbt_library import CBT_LIBRARY
+from backend.services.ai_engine import insights
 from . import repository
 from . import charts
 

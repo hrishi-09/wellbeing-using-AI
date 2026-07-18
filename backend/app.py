@@ -11,16 +11,31 @@ sessions and routing to the right service. The services below it
 by module boundary and only talk to each other's public functions —
 so any one of them can be pulled out into its own deployed process
 later without changing how it's called from here.
+
+This file is not meant to be run directly — use run.py at the project
+root (`python run.py`), so both this "backend" package and the
+sibling "db" package are importable. Production hosts should point
+gunicorn at `run:app` (see Procfile) for the same reason.
 """
 import os
 from flask import Flask, render_template
 
-from data import db
-from services.user_service.routes import user_service
-from services.health_data_service.routes import health_data_service
-from services.ai_engine.routes import ai_engine
+from db import connection as db
+from backend.services.user_service.routes import user_service
+from backend.services.health_data_service.routes import health_data_service
+from backend.services.ai_engine.routes import ai_engine
 
-app = Flask(__name__)
+# The frontend (templates + static assets) lives in its own top-level
+# folder, sibling to this backend package — not inside it — so Flask
+# needs to be told explicitly where to find them.
+_PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_FRONTEND_DIR = os.path.join(_PROJECT_ROOT, "frontend")
+
+app = Flask(
+    __name__,
+    template_folder=os.path.join(_FRONTEND_DIR, "templates"),
+    static_folder=os.path.join(_FRONTEND_DIR, "static"),
+)
 app.secret_key = os.environ.get("AURO_SECRET", "rajbari-auro-dev-secret-change-me")
 
 db.init_db()
@@ -37,9 +52,3 @@ def handle_500(e):
     app.logger.exception("Unhandled server error")
     return render_template("error.html"), 500
 
-
-if __name__ == "__main__":
-    # use_reloader=False avoids "signal only works in main thread" errors that
-    # occur when the dev server is launched from certain IDEs/debuggers where
-    # Flask's auto-reloader isn't running in the main interpreter thread.
-    app.run(debug=True, port=5050, use_reloader=False)
